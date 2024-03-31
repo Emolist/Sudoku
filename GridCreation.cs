@@ -46,8 +46,6 @@ public class GridCreation : MonoBehaviour
 
     private void ShuffleMethodDetermine(int n)
     {
-        Debug.Log("Shuffle");
-
         if (n == 1)
         {
             Transport();

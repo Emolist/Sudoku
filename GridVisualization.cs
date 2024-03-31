@@ -8,18 +8,22 @@ using Button = UnityEngine.UI.Button;
 
 public class GridVisualization : MonoBehaviour
 {
-    public GameObject grid, cell;
-    public GridCreation tableSource;
-    public PlayerActions playerActions;
-    int[][] table;
+    public GameObject grid, cell, creatingText;
     public GameObject[][] visibleTable;
-    Text[][] gridValues;
+
+    GridCreation tableSource;
+    PlayerActions playerActions;
+    SingleTable single;
+
+    int[][] table;
+    bool draw;
 
     private void Awake()
     {
         grid = GameObject.FindWithTag("Grid");
         tableSource = GameObject.FindWithTag("GameController").GetComponentInChildren<GridCreation>();
         playerActions = GameObject.FindWithTag("GameController").GetComponentInChildren<PlayerActions>();
+        single = GameObject.FindWithTag("GameController").GetComponentInChildren<SingleTable>();
     }
 
     void Start()
@@ -36,23 +40,21 @@ public class GridVisualization : MonoBehaviour
         {
             visibleTable[b] = new GameObject[9];
         }
-
-        gridValues = new Text[9][];
-        for (int c = 0; c < 9; c++)
-        {
-            gridValues[c] = new Text[9];
-        }
-        
     }
 
     public void Display()
     {
-        StartCoroutine(Fill());
+        if (!draw && single.counter == 1)
+        {
+            draw = true;
+            creatingText.SetActive(true);
+            StartCoroutine(Fill());
+        }
     }
 
     IEnumerator Fill()
     {
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(3f);
 
         for (int d = 0; d < 9; d++)
         {
@@ -84,6 +86,7 @@ public class GridVisualization : MonoBehaviour
             for (int g = 0; g < 9; g++)
             {
                 GameObject newButton = Instantiate(cell, grid.transform) as GameObject;
+                visibleTable[f][g] = newButton;
                 if (table[f][g] != 0)
                 {
                     newButton.GetComponentInChildren<TMP_Text>().text = table[f][g].ToString();
@@ -91,6 +94,9 @@ public class GridVisualization : MonoBehaviour
                 } else newButton.GetComponentInChildren<TMP_Text>().text = " ";
             }
         }
+        draw = false;
+        single.counter = 0;
+        creatingText.SetActive(false);
     }
 
 }
